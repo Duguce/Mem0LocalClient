@@ -7,7 +7,7 @@ class Mem0Client:
     def __init__(self, base_url: str = "http://localhost:8000"):
         self.base_url = base_url
 
-    def add(self, messages: list[Dict], user_id: Optional[str] = None, agent_id: Optional[str] = None, run_id: Optional[str] = None, metadata: Optional[Dict[str, Any]] = None):
+    def add(self, messages: list[Dict], timestamp: Optional[str] = None, user_id: Optional[str] = None, agent_id: Optional[str] = None, run_id: Optional[str] = None, metadata: Optional[Dict[str, Any]] = None):
         """Create memories."""
         url = f"{self.base_url}/memories"
 
@@ -25,6 +25,8 @@ class Mem0Client:
         if run_id:
             metadata["run_id"] = run_id
 
+        metadata["timestamp"] = timestamp
+
         data = {
             "messages": messages,
             "user_id": user_id,
@@ -37,7 +39,7 @@ class Mem0Client:
         response.raise_for_status()
         return response.json()
 
-    def search(self, query: str, user_id: Optional[str] = None, agent_id: Optional[str] = None, run_id: Optional[str] = None, filters: Optional[Dict[str, Any]] = None, limit: int = 10):
+    def search(self, query: str, user_id: Optional[str] = None, agent_id: Optional[str] = None, run_id: Optional[str] = None, filters: Optional[Dict[str, Any]] = None, top_k: int = 10):
         """Search memories."""
         url = f"{self.base_url}/search"
 
@@ -55,7 +57,7 @@ class Mem0Client:
         response = requests.post(url, json=data)
         response.raise_for_status()
 
-        top_k_results = response.json().get('results', [])[:limit]
+        top_k_results = response.json().get('results', [])[:top_k]
         top_k_response = {'results': top_k_results}
 
         return top_k_response
