@@ -24,7 +24,7 @@ class Mem0Client:
             metadata["agent_id"] = agent_id
         if run_id:
             metadata["run_id"] = run_id
-
+            
         metadata["timestamp"] = timestamp
 
         data = {
@@ -57,10 +57,9 @@ class Mem0Client:
         response = requests.post(url, json=data)
         response.raise_for_status()
 
-        top_k_results = response.json().get('results', [])[:top_k]
-        top_k_response = {'results': top_k_results}
-
-        return top_k_response
+        results = response.json().get('results', [])
+        top_k_results = results[-top_k:][::-1] if len(results) > top_k else results
+        return {'results': top_k_results}
 
     def get_all(self, user_id: Optional[str] = None, agent_id: Optional[str] = None, run_id: Optional[str] = None):
         """Retrieve all memories."""
