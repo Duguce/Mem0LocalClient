@@ -57,9 +57,9 @@ class Mem0Client:
         response = requests.post(url, json=data)
         response.raise_for_status()
 
-        results = response.json().get('results', [])
-        top_k_results = results[-top_k:][::-1] if len(results) > top_k else results
-        return {'results': top_k_results}
+        # results = response.json().get('results', [])
+        # top_k_results = results[-top_k:][::-1] if len(results) > top_k else results
+        return response.json()
 
     def get_all(self, user_id: Optional[str] = None, agent_id: Optional[str] = None, run_id: Optional[str] = None):
         """Retrieve all memories."""
