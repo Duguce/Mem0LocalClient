@@ -57,9 +57,18 @@ class Mem0Client:
         response = requests.post(url, json=data)
         response.raise_for_status()
 
-        # results = response.json().get('results', [])
-        # top_k_results = results[-top_k:][::-1] if len(results) > top_k else results
-        return response.json()
+        results = response.json().get('results', [])
+        top_k_results = results[:top_k] if len(results) > top_k else results
+
+        relations = response.json().get('relations', [])
+        top_k_relations = relations[:top_k] if len(
+            relations) > top_k else relations
+
+        return {
+            "results": top_k_results,
+            "relations": top_k_relations
+        }
+
 
     def get_all(self, user_id: Optional[str] = None, agent_id: Optional[str] = None, run_id: Optional[str] = None):
         """Retrieve all memories."""
